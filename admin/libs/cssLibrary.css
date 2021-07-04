@@ -1,0 +1,120 @@
+body {
+    padding: 0;
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+#body {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+button,textarea,input {
+    outline: none;
+    border: none;
+    background: none;
+    padding: 3px 6px;
+}
+
+a {
+    text-decoration: none;
+    color: initial;
+}
+
+.flexRound {
+    display: flex !important;
+    align-items: space-around !important;
+    justify-content: flex-around !important;
+}
+
+.flexBetween {
+    display: flex !important;
+    align-items: space-between !important;
+    justify-content: space-between !important;
+}
+
+button {
+    cursor: pointer !important;
+}
+
+.flexCenter {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid dimgrey;
+}
+
+.flexEnd {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+}
+
+.flexStart {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 16px;
+}
+
+.flexV {
+    display: flex;
+    justify-content: flex-start;
+    flex-flow: row nowrap;
+    align-items: flex-end;
+    padding: 16px;
+}
+
+.flexBottom {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    flex-flow: row nowrap;
+}
+
+.fixed {
+    position: fixed;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.scrollX {
+    overflow-x: auto;
+    overflow-y: hidden;
+    width: 100%;
+    height: 100%;
+}
+
+.scrollY {
+    overflow-x: hidden;
+    overflow-y: auto;
+    width: 100%;
+    height: 100%;
+}
+
+.scroll {
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+}
+
+.fullCtn {
+}
+
+table{
+    border-collapse: separate !important;
+}
+th{
+    text-transform: capitalize;
+}
