@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="w3.css">
+        <link rel="stylesheet" href="bootstrap.css">
+        <link rel="stylesheet" href="cssLibrary.css">
+        <link rel="stylesheet" href="font-awesome/css/all.css">
+        <script src="socket.js"></script>
+        <script src="Notifier.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>NOdb Admin</title>
+    </head>
+    <body>
+        <div id="body" class="flexBetween">
+            <div id="dbList" class="w3-container">
+                <h1 id="headname">
+                    <i>
+                        <span id="php">NOdb</span>
+                        <span id="admin">Admin</span>
+                    </i>
+                </h1>
+                <br>
+                <div id="databaseList">
+                    <div id="ctn" class="fullCtn">
+                        <!-- All Table -->
+                    </div>
+                </div>
+            </div>
+            <!--databases list ends here-->
+            <div id="dbs" class="dbs">
+                <div class="flexBetween w3-block w3-padding" style="color:white;background:rgba(32, 35, 49, 0.753) ; box-shadow:3px 3px 10px 0px rgb(196, 196, 196);">
+                    <div>
+                        <button class="fa fa-server w3-barge w3-white"></button>
+                        <span id="server"></span>
+                    </div>
+                    <button style="color:white;" class="fa fa-sign-out-alt" id="logOut"></button>
+                </div>
+                <div id="navs" class="flexStart w3-block w3-padding">
+                    <button class="dataBase tablinks" onclick="openTab(event,'dataBase')">
+                        <span class="fa fa-database"></span>
+                        Table<span class="name"></span>
+                    </button>
+                    <button class="sql tablinks" onclick="openTab(event,'sql')">
+                        <span class="fa fa-code"></span>
+                        SQL<span class="name"></span>
+                    </button>
+                    <button class="import tablinks" onclick="openTab(event,'import')">
+                        <span class="fa fa-plus"></span>
+                        Import<span class="name"></span>
+                    </button>
+                    <button class="export tablinks" onclick="openTab(event,'export')">
+                        <span class="fa fa-share"></span>
+                        Export<span class="name"></span>
+                    </button>
+                </div>
+                <div id="content" class="w3-block">
+                <!--end dbs-->
+                    <div class="tabcontent" id="dataBase">
+                        
+                    </div>
+                    <div class="tabcontent" id="sql">
+                        <textarea id="query_runner" placeholder="Enter your query"></textarea>
+                        <button>Run</button>
+                    </div>
+                    <div class="tabcontent" id="export">
+                        <button id="exportBtn">Export Database</button>
+                    </div>
+                    <div class="tabcontent" id="import">
+                        <div id="error_log"></div>
+                        <textarea id="import_input"></textarea>
+                        <button class="btn">Import SQL</button>
+                        <button class="btn">Import NODB</button>
+                        <button class="btn">Run Query</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script src="lilscript.js"></script>
+    <script type="text/lilscript" src="script.js"></script>
+</html>
