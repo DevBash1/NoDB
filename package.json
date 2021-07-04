@@ -1,0 +1,41 @@
+{
+  "name": "bash-nodb",
+  "version": "1.0.0",
+  "description": "A Serverless Relational DataBase",
+  "main": "nodb.nd.js",
+  "dependencies": {
+    "chalk": "^4.1.1",
+    "clear": "^0.1.0",
+    "express": "^4.17.1",
+    "figlet": "^1.5.0",
+    "inquirer-recursive": "^0.0.7",
+    "minimist": "^1.2.5",
+    "sjcl": "^1.0.8",
+    "socket.io": "^4.1.2",
+    "websocket": "^1.0.34"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "NOdb",
+    "DataBase",
+    "Serverless",
+    "Bash",
+    "Relational"
+  ],
+  "author": {
+    "name": "Dev Bash",
+    "email": "ikorosamuel1@gmail.com"
+  },
+  "license": "ISC",
+  "bin": {
+    "nodb": "./nodb.nd.js"
+  },
+  "files": [
+    "admin",
+    "db",
+    "README.md"
+  ]
+}
