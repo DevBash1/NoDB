@@ -66,12 +66,16 @@ The time column which holds the insert time.
   time: [ 1625426339719 ],
   name: [ 'Dev Bash' ],
   position: [ 'Web Developer' ],
-  length: 1
 }
 
 ```
 
 It also returns a length for looping through values.
+
+```javascript
+
+db.length // 1
+```
 
 ```javascript
 {
@@ -115,8 +119,7 @@ It also returns a length for looping through values.
     'Dragon Lord',
     'Senior Web Developer',
     'Python Developer'
-  ],
-  length: 12
+  ]
 }
 ```
 
@@ -152,8 +155,7 @@ Which will return
     'Junior Web Developer',
     'Senior Web Developer',
     'Senior Web Developer'
-  ],
-  length: 4
+  ]
 }
 ```
 NoDB also does not have a LIKE or REGEXP clause.
@@ -180,8 +182,7 @@ Which will return
   id: [ 7, 8 ],
   time: [ 1625427491341, 1625427542878 ],
   name: [ 'Dev Chimaobi', 'Dev Deli Gad' ],
-  position: [ 'MERN Developer', 'MERN FullStack Developer' ],
-  length: 2
+  position: [ 'MERN Developer', 'MERN FullStack Developer' ]
 }
 ```
 
@@ -220,7 +221,7 @@ Using The NoDB Admin you can do other cool things like Importing NoDB Databases 
 Isn't that cool.
 being able to import you MySQL DataBases to NoDB.
 
-You can edit your rows from the NoDB Admin too by Editing the Row and Pressing.
+You can edit your rows from the NoDB Admin by Editing the Row and Pressing.
 ```javascript
 Ctrl + M
 ```
