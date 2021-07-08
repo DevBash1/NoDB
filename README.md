@@ -201,6 +201,9 @@ Run NoDB Admin and Manage Database From your browser.
 ```bash
 nodb -s PORT
 ```
+
+![alt text](https://github.com/DevBash1/NoDB/blob/main/Screenshot%202021-07-08%208.48.44%20AM.png?raw=true)
+
 Where PORT is the port for running the NoDB server.
 The defaulf port is 4042.
 
