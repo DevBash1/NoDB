@@ -11,6 +11,12 @@ Use the node package manager [npm](https://npmjs.com) to install NoDB.
 ```bash
 npm i -g bash-nodb
 ```
+Or from the browser
+
+```html
+<script src="/path/JavaScript/nodb.js"></script>
+```
+The browser version requires [Sjcl](https://github.com/bitwiseshiftleft/sjcl) if encrytion will be used.
 
 ## Usage
 
@@ -37,6 +43,7 @@ if(!db.error){ //If no error while trying to login
     console.log("Error: " + db.result); //log error
 }
 ```
+NoDB can be used from [NodifyJS](https://github.com/DevBash1/NodifyJS) too.
 
 You Can query NoDB for Data too Or Insert Values
 ```javascript
@@ -128,9 +135,11 @@ It only supports the most used and more important like -
 
 ```sql
 SELECT
-INSERT INTO
+INSERT
 WHERE
 DROP
+DELETE
+DISTINCT
 TRUNCATE
 CREATE
 LIMIT
@@ -237,6 +246,7 @@ Strings
 Numbers
 Booleans
 Null
+Undefined
 ```
 There is no need to specify Data Types while creating Tables.
 
