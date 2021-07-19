@@ -37,7 +37,7 @@ function NOdb(config=null){
             throw("path is missing");
         }else{
             if(!config.path.includes("/")){
-                config.path = __dirname + "/db/"+config.path;
+                config.path = "/db/"+config.path;
             }
         }
         if(config.encrypt == null){
@@ -45,6 +45,9 @@ function NOdb(config=null){
         }
         if(config.password == null && config.encrypt == true){
             throw("password is missing");
+        }
+        if(config.encrypt == true && typeof sjcl != "object"){
+            throw("Can Not Find sjcl for Encrypting Database!");
         }
         if(config.encrypt == true){
             if(typeof sjcl == "undefined"){
@@ -939,7 +942,7 @@ function NOdb(config=null){
                         //console.log(items)
                         for(i=0;i<len;i++){
                             let new_where = where.rep(keys,items[i]);
-                            console.log(new_where);
+                            //console.log(new_where);
                             try{
                                 if(eval(new_where)){
                                     indexs.push(i);
@@ -1143,7 +1146,7 @@ function NOdb(config=null){
 }
 
 try{
-  module.exports = NOdb;
+    module.exports = NOdb;
 }catch(e){
-  
+    
 }
