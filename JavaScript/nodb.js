@@ -26,6 +26,7 @@ function NOdb(config=null){
     db.encrypt = false;
     db.logged = false;
     db.lastId = null;
+    db.isWeb = false;
     this.login = function(config){
         if(config == null){
             throw("config is missing");
@@ -43,66 +44,93 @@ function NOdb(config=null){
         if(config.encrypt == null){
             config.encrypt = false;
         }
+        if(config.web){
+            db.isWeb = true;
+        }
         if(config.password == null && config.encrypt == true){
             throw("password is missing");
         }
         if(config.encrypt == true && typeof sjcl != "object"){
             throw("Can Not Find sjcl for Encrypting Database!");
         }
-        if(config.encrypt == true){
-            if(typeof sjcl == "undefined"){
-                config.encrypt = false;
-                db.encrypt = false;
+        if(!db.isWeb){
+            if(config.encrypt == true){
+                if(typeof sjcl == "undefined"){
+                    config.encrypt = false;
+                    db.encrypt = false;
+                }else{
+                    db.encrypt = true;
+                    //try to login or create
+                    try{
+                        if(localStorage.getItem(config.path) == null){
+                            //create
+                            let db_str = sjcl.encrypt(config.password,"{}");
+                            setFile(config.path,btoa(db_str));
+                            db.error = false;
+                            db.result = "created successfully";
+                            db.logged = true;
+                        }else{
+                            //login
+                            try{
+                                let db_str = sjcl.decrypt(config.password,atob(getFile(config.path)));
+                                db.error = false;
+                                db.result = "login success";
+                                db.logged = true;
+                            }catch(e){
+                                db.error = true;
+                                db.encrypt = false;
+                                db.result = "login failed";
+                            }
+                        }
+                    }catch(e){
+                        db.error = true;
+                        db.encrypt = false;
+                        db.result = "login failed";
+                    }
+                }
             }else{
-                db.encrypt = true;
-                //try to login or create
-                try{
-                    if(localStorage.getItem(config.path) == null){
-                        //create
-                        let db_str = sjcl.encrypt(config.password,"{}");
-                        setFile(config.path,btoa(db_str));
+                if(localStorage.getItem(config.path) == null){
+                    //create
+                    let db_str = "{}";
+                    setFile(config.path,db_str);
+                    db.error = false;
+                    db.result = "created successfully";
+                    db.logged = true;
+                }else{
+                    //login
+                    let db_str = getFile(config.path);
+                    if(db_str.includes("DB_TABLES") || db_str.includes("{")){
                         db.error = false;
-                        db.result = "created successfully";
+                        db.result = "login success";
                         db.logged = true;
                     }else{
-                        //login
-                        try{
-                            let db_str = sjcl.decrypt(config.password,atob(getFile(config.path)));
-                            db.error = false;
-                            db.result = "login success";
-                            db.logged = true;
-                        }catch(e){
-                            db.error = true;
-                            db.encrypt = false;
-                            db.result = "login failed";
-                        }
+                        db.error = true;
+                        db.result = "login failed";
+                        db.logged = false;
                     }
-                }catch(e){
-                    db.error = true;
-                    db.encrypt = false;
-                    db.result = "login failed";
                 }
             }
         }else{
-            if(localStorage.getItem(config.path) == null){
-                //create
-                let db_str = "{}";
-                setFile(config.path,db_str);
-                db.error = false;
-                db.result = "created successfully";
-                db.logged = true;
+            //Its a web database
+            let gotDB = ajaxSync({
+                url:config.path,
+                type:"GET",
+                params:"",
+            });
+            if(gotDB == "Error Occured"){
+                db.result = "Error loading Database";
+                db.error = true;
             }else{
-                //login
-                let db_str = getFile(config.path);
-                if(db_str.includes("DB_TABLES") || db_str.includes("{")){
-                    db.error = false;
-                    db.result = "login success";
-                    db.logged = true;
-                }else{
+                try{
+                    JSON.parse(gotDB);
+                }catch(e){
+                    db.result = "Bad DB";
                     db.error = true;
-                    db.result = "login failed";
-                    db.logged = false;
+                    return false;
                 }
+                db.error = false;
+                db.result = "login success";
+                db.logged = true;
             }
         }
         db.name = config.database;
@@ -113,6 +141,26 @@ function NOdb(config=null){
         db.login(config);
     }
     this.getDB = function(){
+        if(db.isWeb){
+            let gotDB = ajaxSync({
+                url:db.path,
+                type:"GET",
+                params:"",
+            });
+            if(gotDB == "Error Occured"){
+                db.result = "Error loading Database";
+                db.error = true;
+                throw("Error loading Database");
+            }else{
+                try{
+                    return JSON.parse(gotDB);
+                }catch(e){
+                    db.result = "Bad DB";
+                    db.error = true;
+                    return false;
+                }
+            }
+        }
         if(db.encrypt){
             try{
                 let db_str = getFile(db.path);
@@ -135,6 +183,11 @@ function NOdb(config=null){
         }
     }
     this.setDB = function(data){
+        if(db.isWeb){
+            db.result = "Error Setting Database";
+            db.error = true;
+            throw("Error Setting Database");
+        }
         if(db.encrypt){
             try{
                 let db_str = JSON.stringify(data);
@@ -251,6 +304,46 @@ function NOdb(config=null){
         return array;
     }
 
+    function ajaxSync(json) {
+        json = JSON.stringify(json);
+        let res = "";
+        var data = JSON.parse(json);
+        var url = data.url;
+        var type = data.type;
+        var params = data.params.toString();
+
+        if (window.XMLHttpRequest) {
+            // code for modern browsers
+            xh = new XMLHttpRequest();
+        } else {
+            // code for old IE browsers
+            xh = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+
+        xh.onload = function() {
+            if (xh.status == 200) {
+                res = xh.responseText;
+            }else{
+                res = "Error Occured";
+            }
+        }
+        xh.onerror = function(){
+            res = "Error Occured";
+        }
+        if (type.toLowerCase() == "get") {
+            xh.open(type, url, false);
+            xh.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xh.send();
+        } else if (type.toLowerCase() == "post") {
+            xh.open(type, url, false);
+            xh.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xh.send(params);
+        } else {
+            throw ("Can only take GET and POST");
+        }
+        return res;
+    }
+
     function setType(word){
         let keys = [true,false,null,undefined];
         if(keys.indexOf(word) != -1){
@@ -348,6 +441,11 @@ function NOdb(config=null){
         let word = str[0].toUpperCase();
         
         if(word == "CREATE"){
+            if(db.isWeb){
+                db.result = "Can Not Modify Database";
+                db.error = true;
+                return false;
+            }
             //Handle Create
             if(str[1].toUpperCase() == "TABLE"){
                 lastDB = db.getDB();
@@ -627,6 +725,11 @@ function NOdb(config=null){
                 }
             }
         }else if(word == "DELETE"){
+            if(db.isWeb){
+                db.result = "Can Not Modify Database";
+                db.error = true;
+                return false;
+            }
             lastDB = db.getDB();
             if(str[1] == "from"){
                 let from = "";
@@ -718,6 +821,11 @@ function NOdb(config=null){
                 db.result = "Unexpected String '"+str[1]+"'";
             }
         }else if(word == "INSERT"){
+            if(db.isWeb){
+                db.result = "Can Not Modify Database";
+                db.error = true;
+                return false;
+            }
             if(str[1] == "into"){
                 lastDB = db.getDB();
                 let into = "";
@@ -727,10 +835,15 @@ function NOdb(config=null){
 
                 //get into
                 let check = line.substring(line.indexOf("into"),line.indexOf("values"));
+                
                 if(line.includes("values") && (!check.includes("(") && !check.includes(")"))){
                     into = line.substring(line.indexOf("into")+4,line.indexOf("values")).trim();
                 }else if(line.includes("value") && (!check.includes("(") && !check.includes(")"))){
                     into = line.substring(line.indexOf("into")+4,line.indexOf("value")).trim();
+                }else if(line.includes("VALUES") && (!check.includes("(") && !check.includes(")"))){
+                    into = line.substring(line.indexOf("into")+4,line.indexOf("VALUES")).trim();
+                }else if(line.includes("VALUE") && (!check.includes("(") && !check.includes(")"))){
+                    into = line.substring(line.indexOf("into")+4,line.indexOf("VALUE")).trim();
                 }else if(check.includes("(") && check.includes(")")){
                     into = line.substring(line.indexOf("into")+4,line.indexOf("(")).trim();
                 }else{
@@ -841,6 +954,11 @@ function NOdb(config=null){
                 db.result = "Unexpected String '"+str[1]+"'";
             }
         }else if(word == "DROP"){
+            if(db.isWeb){
+                db.result = "Can Not Modify Database";
+                db.error = true;
+                return false;
+            }
             if(str[1] == "table"){
                 lastDB = db.getDB();
                 if(str.length > 3){
@@ -874,6 +992,11 @@ function NOdb(config=null){
                 db.result = "Unexpected String '"+str[1]+"'";
             }
         }else if(word == "UPDATE"){
+            if(db.isWeb){
+                db.result = "Can Not Modify Database";
+                db.error = true;
+                return false;
+            }
             if(str[2] == "set"){
                 lastDB = db.getDB();
                 let update = "";
@@ -984,6 +1107,11 @@ function NOdb(config=null){
                 db.result = "Unexpected String '"+str[2]+"'";
             }
         }else if(word == "ALTER"){
+            if(db.isWeb){
+                db.result = "Can Not Modify Database";
+                db.error = true;
+                return false;
+            }
             if(str[1] == "table"){
                 let line = str.join(" ");
                 if(str[3] == "add"){
@@ -1080,6 +1208,11 @@ function NOdb(config=null){
                 db.result = "Unexpected String '"+str[1]+"'";
             }
         }else if(word == "TRUNCATE"){
+            if(db.isWeb){
+                db.result = "Can Not Modify Database";
+                db.error = true;
+                return false;
+            }
             if(str[1] == "table" && str.length == 3){
                 lastDB = db.getDB();
                 let truncate = "";
@@ -1120,6 +1253,7 @@ function NOdb(config=null){
             db.error = true;
             db.result = "Unknown Keyword " + word;
         }
+        return db.result;
     }
     this.undo = function(){
         if(lastDB != null){
@@ -1137,12 +1271,17 @@ function NOdb(config=null){
     this.escape = function(str){
         return escape(str);
     }
-    //this.result = function(){
-      //  return db.result;
-    //}
-    //this.error = function(){
-      //  return db.error;
-    //}
+    this.showTable = function(){
+        try{
+            if(typeof db.result == "object"){
+                console.table(db.result);
+            }else{
+                console.warn("Error displaying table");
+            }
+        }catch(e){
+            console.warn("Error displaying table");
+        }
+    }
 }
 
 try{
